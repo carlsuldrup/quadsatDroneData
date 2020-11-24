@@ -1,0 +1,12 @@
+{
+    "name": "QuadsatDroneData",
+    "description": "A Node-RED Project",
+    "version": "0.0.1",
+    "dependencies": {},
+    "node-red": {
+        "settings": {
+            "flowFile": "flows_DESKTOP-CBU45BN.json",
+            "credentialsFile": "flows_DESKTOP-CBU45BN_cred.json"
+        }
+    }
+}
