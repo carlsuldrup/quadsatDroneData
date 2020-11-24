@@ -1,1 +1,496 @@
-[]
+[
+    {
+        "id": "88d79493.be8b78",
+        "type": "tab",
+        "label": "Flow 1",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "74749410.47199c",
+        "type": "tab",
+        "label": "Main Flow",
+        "disabled": false,
+        "info": ""
+    },
+    {
+        "id": "23c4a7ca.3b8a18",
+        "type": "ui_group",
+        "name": "Quadsat",
+        "tab": "d13c7ade.bc7418",
+        "order": 1,
+        "disp": true,
+        "width": "6",
+        "collapse": true
+    },
+    {
+        "id": "d6457ac3.8eefa8",
+        "type": "MySQLdatabase",
+        "name": "",
+        "host": "127.0.0.1",
+        "port": "3306",
+        "db": "test",
+        "tz": "",
+        "charset": "UTF8"
+    },
+    {
+        "id": "d13c7ade.bc7418",
+        "type": "ui_tab",
+        "name": "Home",
+        "icon": "dashboard",
+        "disabled": false,
+        "hidden": false
+    },
+    {
+        "id": "ef5e24da.c66af8",
+        "type": "inject",
+        "z": "74749410.47199c",
+        "name": "",
+        "props": [
+            {
+                "p": "payload"
+            },
+            {
+                "p": "topic",
+                "vt": "str"
+            }
+        ],
+        "repeat": "",
+        "crontab": "",
+        "once": false,
+        "onceDelay": 0.1,
+        "topic": "",
+        "payload": "true",
+        "payloadType": "bool",
+        "x": 150,
+        "y": 540,
+        "wires": [
+            [
+                "e79c9ca2.3c692",
+                "ac21feb3.f5141",
+                "439c23ec.aa487c",
+                "690eaae6.e97e44"
+            ]
+        ]
+    },
+    {
+        "id": "ac21feb3.f5141",
+        "type": "file in",
+        "z": "74749410.47199c",
+        "name": "Spectrum",
+        "filename": "C:\\Users\\carls\\OneDrive\\Skrivebord\\industry4.0\\Rå_data\\UCL_QuadSAT_spectrum.csv",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 400,
+        "y": 620,
+        "wires": [
+            [
+                "c4db62.fb1b04a"
+            ]
+        ]
+    },
+    {
+        "id": "e79c9ca2.3c692",
+        "type": "file in",
+        "z": "74749410.47199c",
+        "name": "GPS",
+        "filename": "C:\\Users\\carls\\OneDrive\\Skrivebord\\industry4.0\\Rå_data\\UCL_QuadSAT_GPS.csv",
+        "format": "utf8",
+        "chunk": false,
+        "sendError": false,
+        "encoding": "none",
+        "x": 390,
+        "y": 500,
+        "wires": [
+            [
+                "57a5f038.d9c9a"
+            ]
+        ]
+    },
+    {
+        "id": "57a5f038.d9c9a",
+        "type": "csv",
+        "z": "74749410.47199c",
+        "name": "gps",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "none",
+        "multi": "mult",
+        "ret": "\\n",
+        "temp": "timestamp, latitude, longitude, altitude, relative_altitude",
+        "skip": "1",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 550,
+        "y": 500,
+        "wires": [
+            [
+                "a48bb9e8.30e658"
+            ]
+        ]
+    },
+    {
+        "id": "c4db62.fb1b04a",
+        "type": "csv",
+        "z": "74749410.47199c",
+        "name": "spectrum",
+        "sep": ",",
+        "hdrin": "",
+        "hdrout": "none",
+        "multi": "mult",
+        "ret": "\\n",
+        "temp": "sweep,timestamp,peak_freq_mhz,peak_ampl_dbm",
+        "skip": "1",
+        "strings": true,
+        "include_empty_strings": "",
+        "include_null_values": "",
+        "x": 580,
+        "y": 620,
+        "wires": [
+            [
+                "12e1336e.49268d"
+            ]
+        ]
+    },
+    {
+        "id": "a48bb9e8.30e658",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Add topic GPS",
+        "func": "msg.topic = \"gps\";\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 720,
+        "y": 500,
+        "wires": [
+            [
+                "f4a58d45.4a21a"
+            ]
+        ]
+    },
+    {
+        "id": "12e1336e.49268d",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Add topic spectrum",
+        "func": "msg.topic = \"spectrum\";\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 750,
+        "y": 620,
+        "wires": [
+            [
+                "f4a58d45.4a21a"
+            ]
+        ]
+    },
+    {
+        "id": "439c23ec.aa487c",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Configuration for Fusion node",
+        "func": "const msg1 ={\n  topic: 'fusion-configuration',\n  payload: {\n    outputTopic: 'a-and-b-merged',\n    inputTopics: [\n      'gps',\n      'spectrum'\n    ],\n    allowUndefined: false,\n    onlyPayloads: false,\n    additionalData: {\n      fromage: false\n    }\n  }\n}\n\nreturn msg1;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 570,
+        "y": 420,
+        "wires": [
+            [
+                "f4a58d45.4a21a"
+            ]
+        ]
+    },
+    {
+        "id": "b84747d2.bcb8a8",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Sort & Merge",
+        "func": "const gpsDataArray = msg.payload.gps.payload;\nconst spectrumDataArray = msg.payload.spectrum.payload;\nvar filtered = [];\n\n// Find match\nfunction doesTimeStampMatch(gps, spectrum){\n  spectrum.sweep = parseInt(spectrum.sweep);\n  spectrum.timestamp = parseInt(spectrum.timestamp);\n  spectrum.peak_freq_mhz = parseFloat(spectrum.peak_freq_mhz);\n  spectrum.peak_ampl_dbm = parseFloat(spectrum.peak_ampl_dbm);\n  return Math.abs(gps.timestamp/1000000 - spectrum.timestamp) <= 50;\n}\n// Merge\nfunction returnMatches(gps) {\n    const spectrums = spectrumDataArray.filter((spectrum) => doesTimeStampMatch(gps, spectrum));\n\n    if (Object.keys(spectrums).length === 0) {\n        return null;\n    }\n    gps.sweep = spectrums[0].sweep;\n    gps.peak_freq_mhz = spectrums[0].peak_freq_mhz;\n    gps.peak_ampl_dbm = spectrums[0].peak_ampl_dbm;\n    return gps;\n}\nvar result = gpsDataArray.map(returnMatches);\n// Sorter tomme fra\nfiltered = result.filter(function (el) {\n  return el != null;\n});\nreturn { filtered };",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1170,
+        "y": 520,
+        "wires": [
+            [
+                "ee7d822b.5eba2",
+                "62b85bc6.b503c4",
+                "d822cf40.42825",
+                "85831470.6dd018"
+            ]
+        ]
+    },
+    {
+        "id": "ee7d822b.5eba2",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Prepare data for insertion",
+        "func": "var valueString = \"\";\n\n// Byg en streng med format:\n// ('value', 'value', 'value'),('value', 'value', 'value'), ..\nmsg.filtered.forEach(function (item, index) {\n    valueString += \"(\"\n    for (var key in item) {\n        valueString += \"'\" + item[key] + \"',\"\n    }\n    // Fjern det sidste komma mellem values.\n    valueString = valueString.replace(/,\\s*$/, \"\");\n    valueString += \"),\";\n});\n\n// Fjern det sidste komma mellem rows.\nvalueString = valueString.replace(/,\\s*$/, \"\");\n\n// Send mysql query mod mysql noden.\nmsg.topic = \"INSERT INTO drone_data \" +\n            \"(timestamp, latitude, longitude, altitude, relative_altitude, sweep, peak_freq_mhz, peak_ampl_dbm) \" +\n            \"VALUES \" + valueString;\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1470,
+        "y": 460,
+        "wires": [
+            [
+                "da2814a8.0dabf8"
+            ]
+        ]
+    },
+    {
+        "id": "f4a58d45.4a21a",
+        "type": "fusion",
+        "z": "74749410.47199c",
+        "name": "",
+        "x": 1010,
+        "y": 520,
+        "wires": [
+            [
+                "b84747d2.bcb8a8"
+            ]
+        ]
+    },
+    {
+        "id": "b70bfc1.98157",
+        "type": "debug",
+        "z": "74749410.47199c",
+        "name": "",
+        "active": true,
+        "tosidebar": true,
+        "console": false,
+        "tostatus": false,
+        "complete": "true",
+        "targetType": "full",
+        "statusVal": "",
+        "statusType": "auto",
+        "x": 1770,
+        "y": 620,
+        "wires": []
+    },
+    {
+        "id": "fc924fd0.d06a7",
+        "type": "ui_chart",
+        "z": "74749410.47199c",
+        "name": "",
+        "group": "23c4a7ca.3b8a18",
+        "order": 0,
+        "width": "0",
+        "height": "0",
+        "label": "Peak Ampl Dbm from matches between sweeps 1450-1850",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "x",
+        "interpolate": "linear",
+        "nodata": "Waiting for data...",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "15",
+        "removeOlderPoints": "2000",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": true,
+        "colors": [
+            "#1f77b4",
+            "#2fd501",
+            "#ff7f0e",
+            "#0ad60a",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 1940,
+        "y": 500,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "da2814a8.0dabf8",
+        "type": "mysql",
+        "z": "74749410.47199c",
+        "d": true,
+        "mydb": "d6457ac3.8eefa8",
+        "name": "SQL_Server",
+        "x": 1790,
+        "y": 460,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "85831470.6dd018",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Data to chart (Sweep as x)",
+        "func": "var peakFreqMHz = [];\nvar timestampArray = [];\nvar peakAmplArray = [];\nvar latitudeArray = [];\nvar longitudeArray = [];\nvar altitudeArray = [];\nvar relativeAltitudeArray = [];\n\nmsg.filtered.forEach(function (item, index) {\n    peakFreqMHz.push({\n        x: item.sweep,\n        y: item.peak_freq_mhz,\n    });\n    timestampArray.push({\n        x: item.sweep,\n        y: item.timestamp\n    })\n    peakAmplArray.push({\n        x: item.sweep,\n        y: item.peak_ampl_dbm,\n    })\n    latitudeArray.push({\n        x: item.sweep,\n        y: item.latitude,\n    })\n    longitudeArray.push({\n        x: item.sweep,\n        y: item.longitude,\n    })\n    altitudeArray.push({\n        x: item.sweep,\n        y: item.altitude,\n    })\n    relativeAltitudeArray.push({\n        x: item.sweep,\n        y: item.relative_altitude,\n    })\n  \n});\n\nfunction measure(lat1, lon1, lat2, lon2){  // generally used geo measurement function\n    var R = 6378.137; // Radius of earth in KM\n    var dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;\n    var dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;\n    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +\n    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *\n    Math.sin(dLon/2) * Math.sin(dLon/2);\n    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));\n    var d = R * c;\n    return d * 1000; // meters\n}\n\nmsg.payload = [{\n  \"series\": [\"Peak Frequency mhz\", \"Timestamp\",\"Peak Ampl dbm\",\"Latitude\",\"Longitude\",\"Altitude\",\"Relative Altitude\"],\n  \"data\": [peakFreqMHz,timestampArray,peakAmplArray,latitudeArray,longitudeArray,altitudeArray,relativeAltitudeArray],\n  \"labels\": [\"Sweep as X value\"]\n}];\n\nmsg.topic = \"Sweep as X value\";\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1480,
+        "y": 580,
+        "wires": [
+            [
+                "37403dc8.259a82",
+                "b70bfc1.98157"
+            ]
+        ]
+    },
+    {
+        "id": "690eaae6.e97e44",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Reset Dashboard",
+        "func": "msg.payload = [];\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1450,
+        "y": 620,
+        "wires": [
+            [
+                "fc924fd0.d06a7",
+                "28edd6ec.efcb3a"
+            ]
+        ]
+    },
+    {
+        "id": "62b85bc6.b503c4",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Peak Ampl Dbm",
+        "func": "var custom = [];\nvar totalMeters = 0;\n\nmsg.filtered.forEach(function (item, index) {\n    if (item.sweep > 1450 && item.sweep < 1850){\n        custom.push({\n            x: totalMeters = totalMeters + measure(item.latitude,item.longitude,msg.filtered[index-1].latitude,msg.filtered[index-1].longitude),\n            y: item.peak_ampl_dbm,\n        })\n    } \n});\n\nfunction measure(lat1, lon1, lat2, lon2){  // generally used geo measurement function\n    var R = 6378.137; // Radius of earth in KM\n    var dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;\n    var dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;\n    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +\n    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *\n    Math.sin(dLon/2) * Math.sin(dLon/2);\n    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));\n    var d = R * c;\n    return d * 1000; // meters\n}\n\nmsg.payload = [{\n    \"series\": [\"Peak Ampl Dbm\"],\n    \"data\" : [custom],\n}]\nmsg.topic = \"Distance covered in meters\";\n\nreturn msg;",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1440,
+        "y": 500,
+        "wires": [
+            [
+                "fc924fd0.d06a7",
+                "b70bfc1.98157"
+            ]
+        ]
+    },
+    {
+        "id": "d822cf40.42825",
+        "type": "function",
+        "z": "74749410.47199c",
+        "name": "Peak Freq MHz",
+        "func": "var customFreq = [];\nvar totalMeters = 0;\n\nmsg.filtered.forEach(function (item, index) {\n    if (item.sweep > 1450 && item.sweep < 1850){\n        customFreq.push({\n            x: totalMeters = totalMeters + measure(item.latitude,item.longitude,msg.filtered[index-1].latitude,msg.filtered[index-1].longitude),\n            y: item.peak_freq_mhz,\n        })\n    } \n});\n\nfunction measure(lat1, lon1, lat2, lon2){  // generally used geo measurement function\n    var R = 6378.137; // Radius of earth in KM\n    var dLat = lat2 * Math.PI / 180 - lat1 * Math.PI / 180;\n    var dLon = lon2 * Math.PI / 180 - lon1 * Math.PI / 180;\n    var a = Math.sin(dLat/2) * Math.sin(dLat/2) +\n    Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180) *\n    Math.sin(dLon/2) * Math.sin(dLon/2);\n    var c = 2 * Math.atan2(Math.sqrt(a), Math.sqrt(1-a));\n    var d = R * c;\n    return d * 1000; // meters\n}\n\nmsg.payload = [{\n    \"series\": [\"Peak Freq MHz\"],\n    \"data\" : [customFreq],\n}]\nmsg.topic = \"Distance covered in meters\";\n\nreturn msg;\n",
+        "outputs": 1,
+        "noerr": 0,
+        "initialize": "",
+        "finalize": "",
+        "x": 1440,
+        "y": 540,
+        "wires": [
+            [
+                "28edd6ec.efcb3a",
+                "b70bfc1.98157"
+            ]
+        ]
+    },
+    {
+        "id": "28edd6ec.efcb3a",
+        "type": "ui_chart",
+        "z": "74749410.47199c",
+        "name": "",
+        "group": "23c4a7ca.3b8a18",
+        "order": 0,
+        "width": "0",
+        "height": "0",
+        "label": "Peak Freq MHz from matches between sweeps 1450-1850",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "x",
+        "interpolate": "linear",
+        "nodata": "Waiting for data...",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "15",
+        "removeOlderPoints": "2000",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": true,
+        "colors": [
+            "#1f77b4",
+            "#3bdd0e",
+            "#ff7f0e",
+            "#00ff00",
+            "#98df8a",
+            "#d62728",
+            "#e6e0e0",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 1940,
+        "y": 540,
+        "wires": [
+            []
+        ]
+    },
+    {
+        "id": "37403dc8.259a82",
+        "type": "ui_chart",
+        "z": "74749410.47199c",
+        "name": "",
+        "group": "23c4a7ca.3b8a18",
+        "order": 0,
+        "width": "0",
+        "height": "0",
+        "label": "All data in one chart",
+        "chartType": "line",
+        "legend": "true",
+        "xformat": "x",
+        "interpolate": "linear",
+        "nodata": "Waiting for data...",
+        "dot": false,
+        "ymin": "",
+        "ymax": "",
+        "removeOlder": "15",
+        "removeOlderPoints": "2000",
+        "removeOlderUnit": "60",
+        "cutout": 0,
+        "useOneColor": false,
+        "useUTC": true,
+        "colors": [
+            "#1f77b4",
+            "#3bdd0e",
+            "#ff7f0e",
+            "#2ca02c",
+            "#98df8a",
+            "#d62728",
+            "#ff9896",
+            "#9467bd",
+            "#c5b0d5"
+        ],
+        "outputs": 1,
+        "x": 1820,
+        "y": 580,
+        "wires": [
+            []
+        ]
+    }
+]
