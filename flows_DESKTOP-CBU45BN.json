@@ -62,8 +62,8 @@
         "topic": "",
         "payload": "true",
         "payloadType": "bool",
-        "x": 150,
-        "y": 540,
+        "x": 130,
+        "y": 520,
         "wires": [
             [
                 "e79c9ca2.3c692",
@@ -214,7 +214,7 @@
         "type": "function",
         "z": "74749410.47199c",
         "name": "Sort & Merge",
-        "func": "const gpsDataArray = msg.payload.gps.payload;\nconst spectrumDataArray = msg.payload.spectrum.payload;\nvar filtered = [];\n\n// Find match\nfunction doesTimeStampMatch(gps, spectrum){\n  spectrum.sweep = parseInt(spectrum.sweep);\n  spectrum.timestamp = parseInt(spectrum.timestamp);\n  spectrum.peak_freq_mhz = parseFloat(spectrum.peak_freq_mhz);\n  spectrum.peak_ampl_dbm = parseFloat(spectrum.peak_ampl_dbm);\n  return Math.abs(gps.timestamp/1000000 - spectrum.timestamp) <= 50;\n}\n// Merge\nfunction returnMatches(gps) {\n    const spectrums = spectrumDataArray.filter((spectrum) => doesTimeStampMatch(gps, spectrum));\n\n    if (Object.keys(spectrums).length === 0) {\n        return null;\n    }\n    gps.sweep = spectrums[0].sweep;\n    gps.peak_freq_mhz = spectrums[0].peak_freq_mhz;\n    gps.peak_ampl_dbm = spectrums[0].peak_ampl_dbm;\n    return gps;\n}\nvar result = gpsDataArray.map(returnMatches);\n// Sorter tomme fra\nfiltered = result.filter(function (el) {\n  return el != null;\n});\nreturn { filtered };",
+        "func": "const gpsDataArray = msg.payload.gps.payload;\nconst spectrumDataArray = msg.payload.spectrum.payload;\nvar filtered = [];\n\n// Find match\nfunction doesTimeStampMatch(gps, spectrum){\n  spectrum.sweep = parseInt(spectrum.sweep);\n  spectrum.timestamp = parseInt(spectrum.timestamp);\n  spectrum.peak_freq_mhz = parseFloat(spectrum.peak_freq_mhz);\n  spectrum.peak_ampl_dbm = parseFloat(spectrum.peak_ampl_dbm);\n  return Math.abs(gps.timestamp/1000000 - spectrum.timestamp) <= 55;\n}\n// Merge\nfunction returnMatches(gps) {\n    const spectrums = spectrumDataArray.filter((spectrum) => doesTimeStampMatch(gps, spectrum));\n\n    if (Object.keys(spectrums).length === 0) {\n        return null;\n    }\n    gps.sweep = spectrums[0].sweep;\n    gps.peak_freq_mhz = spectrums[0].peak_freq_mhz;\n    gps.peak_ampl_dbm = spectrums[0].peak_ampl_dbm;\n    return gps;\n}\nvar result = gpsDataArray.map(returnMatches);\n// Sorter tomme fra\nfiltered = result.filter(function (el) {\n  return el != null;\n});\nreturn { filtered };",
         "outputs": 1,
         "noerr": 0,
         "initialize": "",
